@@ -38,8 +38,12 @@
 }
 
 .menu-container form {
-    text-align: end;
-    padding: .3rem 0;
+    text-align: center;
+    padding: .5rem 0;
+
+    @media only screen and (min-width: $bp-small) {
+        text-align: end;
+    }
 }
 
 .menu-container input {

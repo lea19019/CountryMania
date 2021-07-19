@@ -12,7 +12,8 @@ export const state = {
         results: [],
         page: 1,
         resultsPerPage: COUNTRY_PER_PAGE
-    }
+    },
+    regions: {}
 };
 
 const createCountry = (country) => {
@@ -57,11 +58,38 @@ const createCountryList = (data) => {
     return countryList;
 };
 
+const createRegionList = (data) => {
+    const regions = {
+        Africa: [],
+        Americas: [],
+        Asia: [],
+        Europe: [],
+        Oceania: [],
+        Polar: [],
+        Other: []
+    };
+    data.map(country => {
+        if (country.region in regions) {
+            regions[country.region].push({
+                code: country.alpha3Code,
+                name: country.name
+            });
+        } else {
+            regions.Other.push({
+                code: country.alpha3Code,
+                name: country.name
+            });
+        }
+    });
+
+    return regions;
+};
+
 export const loadCountryList = async () => {
     try {
-        const countriesData = await AJAX(`${API_URL}all`);
-        const countries = createCountryList(countriesData);
-        state.countryList.results = countries;
+        const countries = await AJAX(`${API_URL}all`);
+        state.countryList.results = createCountryList(countries);
+        state.regions = createRegionList(countries);
     } catch (err) {
         throw err;
     };
@@ -70,21 +98,24 @@ export const loadCountryList = async () => {
 export const loadCountry = async (code) => {
     try {
         const countryData = await AJAX(`${API_URL}alpha/${code}`);
-        const country = createCountry(countryData);
-        state.country = country;
+        state.country = createCountry(countryData);
     } catch (err) {
         throw err;
     };
 };
 
-export const countryResultsPage = function (page = state.countryList.page) {
+export const countryResultsPage = function (view = '', page = state.countryList.page) {
     state.countryList.page = page;
 
     const start = (page - 1) * state.countryList.resultsPerPage;
     const end = page * state.countryList.resultsPerPage;
-    const countryResults = state.countryList.results.slice(start, end);
 
-    return countryResults;
+    if (view === 'search') {
+        return state.search.results;
+    };
+
+    return state.countryList.results.slice(start, end);
+
 };
 
 export const searchCountry = async (query) => {
@@ -94,13 +125,4 @@ export const searchCountry = async (query) => {
     } catch (err) {
         throw err;
     };
-};
-
-export const countryResultsRegion = async (region) => {
-    try {
-        const regions = await AJAX(`${API_URL}region/${region}`);
-        console.log(regions);
-    } catch (err) {
-
-    }
 };

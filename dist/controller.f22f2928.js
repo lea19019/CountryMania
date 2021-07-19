@@ -117,20 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"js/config.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.COUNTRY_PER_PAGE = exports.API_URL = exports.REGIONS = void 0;
-var REGIONS = ['africa', 'america', 'asia', 'europe', 'oceania'];
-exports.REGIONS = REGIONS;
-var API_URL = 'https://restcountries.eu/rest/v2/';
-exports.API_URL = API_URL;
-var COUNTRY_PER_PAGE = 32;
-exports.COUNTRY_PER_PAGE = COUNTRY_PER_PAGE;
-},{}],"../node_modules/regenerator-runtime/runtime.js":[function(require,module,exports) {
+})({"../node_modules/regenerator-runtime/runtime.js":[function(require,module,exports) {
 var define;
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
@@ -881,6 +868,19 @@ try {
   Function("r", "regeneratorRuntime = r")(runtime);
 }
 
+},{}],"js/config.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.COUNTRY_PER_PAGE = exports.API_URL = exports.REGIONS = void 0;
+var REGIONS = ['africa', 'america', 'asia', 'europe', 'oceania'];
+exports.REGIONS = REGIONS;
+var API_URL = 'https://restcountries.eu/rest/v2/';
+exports.API_URL = API_URL;
+var COUNTRY_PER_PAGE = 32;
+exports.COUNTRY_PER_PAGE = COUNTRY_PER_PAGE;
 },{}],"js/helper.js":[function(require,module,exports) {
 "use strict";
 
@@ -953,7 +953,7 @@ exports.AJAX = AJAX;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.countryResultsRegion = exports.searchCountry = exports.countryResultsPage = exports.loadCountry = exports.loadCountryList = exports.state = void 0;
+exports.searchCountry = exports.countryResultsPage = exports.loadCountry = exports.loadCountryList = exports.state = void 0;
 
 var _config = require("./config");
 
@@ -975,7 +975,8 @@ var state = {
     results: [],
     page: 1,
     resultsPerPage: _config.COUNTRY_PER_PAGE
-  }
+  },
+  regions: {}
 };
 exports.state = state;
 
@@ -1024,9 +1025,35 @@ var createCountryList = function createCountryList(data) {
   return countryList;
 };
 
+var createRegionList = function createRegionList(data) {
+  var regions = {
+    Africa: [],
+    Americas: [],
+    Asia: [],
+    Europe: [],
+    Oceania: [],
+    Polar: [],
+    Other: []
+  };
+  data.map(function (country) {
+    if (country.region in regions) {
+      regions[country.region].push({
+        code: country.alpha3Code,
+        name: country.name
+      });
+    } else {
+      regions.Other.push({
+        code: country.alpha3Code,
+        name: country.name
+      });
+    }
+  });
+  return regions;
+};
+
 var loadCountryList = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-    var countriesData, countries;
+    var countries;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -1036,9 +1063,9 @@ var loadCountryList = /*#__PURE__*/function () {
             return (0, _helper.AJAX)("".concat(_config.API_URL, "all"));
 
           case 3:
-            countriesData = _context.sent;
-            countries = createCountryList(countriesData);
-            state.countryList.results = countries;
+            countries = _context.sent;
+            state.countryList.results = createCountryList(countries);
+            state.regions = createRegionList(countries);
             _context.next = 11;
             break;
 
@@ -1067,7 +1094,7 @@ exports.loadCountryList = loadCountryList;
 
 var loadCountry = /*#__PURE__*/function () {
   var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(code) {
-    var countryData, country;
+    var countryData;
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
@@ -1078,25 +1105,24 @@ var loadCountry = /*#__PURE__*/function () {
 
           case 3:
             countryData = _context2.sent;
-            country = createCountry(countryData);
-            state.country = country;
-            _context2.next = 11;
+            state.country = createCountry(countryData);
+            _context2.next = 10;
             break;
 
-          case 8:
-            _context2.prev = 8;
+          case 7:
+            _context2.prev = 7;
             _context2.t0 = _context2["catch"](0);
             throw _context2.t0;
 
-          case 11:
+          case 10:
             ;
 
-          case 12:
+          case 11:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[0, 8]]);
+    }, _callee2, null, [[0, 7]]);
   }));
 
   return function loadCountry(_x) {
@@ -1107,12 +1133,18 @@ var loadCountry = /*#__PURE__*/function () {
 exports.loadCountry = loadCountry;
 
 var countryResultsPage = function countryResultsPage() {
-  var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : state.countryList.page;
+  var view = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : state.countryList.page;
   state.countryList.page = page;
   var start = (page - 1) * state.countryList.resultsPerPage;
   var end = page * state.countryList.resultsPerPage;
-  var countryResults = state.countryList.results.slice(start, end);
-  return countryResults;
+
+  if (view === 'search') {
+    return state.search.results;
+  }
+
+  ;
+  return state.countryList.results.slice(start, end);
 };
 
 exports.countryResultsPage = countryResultsPage;
@@ -1156,46 +1188,734 @@ var searchCountry = /*#__PURE__*/function () {
 }();
 
 exports.searchCountry = searchCountry;
-
-var countryResultsRegion = /*#__PURE__*/function () {
-  var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(region) {
-    var regions;
-    return regeneratorRuntime.wrap(function _callee4$(_context4) {
-      while (1) {
-        switch (_context4.prev = _context4.next) {
-          case 0:
-            _context4.prev = 0;
-            _context4.next = 3;
-            return (0, _helper.AJAX)("".concat(_config.API_URL, "region/").concat(region));
-
-          case 3:
-            regions = _context4.sent;
-            console.log(regions);
-            _context4.next = 9;
-            break;
-
-          case 7:
-            _context4.prev = 7;
-            _context4.t0 = _context4["catch"](0);
-
-          case 9:
-          case "end":
-            return _context4.stop();
-        }
-      }
-    }, _callee4, null, [[0, 7]]);
-  }));
-
-  return function countryResultsRegion(_x3) {
-    return _ref4.apply(this, arguments);
-  };
-}();
-
-exports.countryResultsRegion = countryResultsRegion;
-},{"./config":"js/config.js","regenerator-runtime":"../node_modules/regenerator-runtime/runtime.js","./helper":"js/helper.js"}],"js/controller.js":[function(require,module,exports) {
+},{"./config":"js/config.js","regenerator-runtime":"../node_modules/regenerator-runtime/runtime.js","./helper":"js/helper.js"}],"js/views/View.js":[function(require,module,exports) {
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var View = /*#__PURE__*/function () {
+  function View() {
+    _classCallCheck(this, View);
+
+    _defineProperty(this, "_data", void 0);
+  }
+
+  _createClass(View, [{
+    key: "render",
+    value: function render(data) {
+      var _render = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+      if (!data || Array.isArray(data) && data.length === 0) return this.renderError();
+      console.log(data);
+      if (data === ' ') return this._clear();
+      this._data = data;
+
+      var markup = this._generateMarkup();
+
+      if (!_render) return markup;
+
+      this._clear();
+
+      this._parentElement.insertAdjacentHTML('afterbegin', markup);
+    }
+  }, {
+    key: "_clear",
+    value: function _clear() {
+      this._parentElement.innerHTML = '';
+    }
+  }, {
+    key: "renderError",
+    value: function renderError() {
+      var message = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this._errorMessage;
+      var markup = "\n      <div class=\"error\">\n        <p>".concat(message, "</p>\n      </div>\n    ");
+
+      this._clear();
+
+      this._parentElement.insertAdjacentHTML('afterbegin', markup);
+    }
+  }, {
+    key: "renderMessage",
+    value: function renderMessage() {
+      var message = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this._message;
+      var markup = "\n      <div class=\"message\">\n        <p>".concat(message, "</p>\n      </div>\n    ");
+
+      this._clear();
+
+      this._parentElement.insertAdjacentHTML('afterbegin', markup);
+    }
+  }]);
+
+  return View;
+}();
+
+exports.default = View;
+;
+},{}],"js/views/homeView.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _View2 = _interopRequireDefault(require("./View.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var HomeView = /*#__PURE__*/function (_View) {
+  _inherits(HomeView, _View);
+
+  var _super = _createSuper(HomeView);
+
+  function HomeView() {
+    var _this;
+
+    _classCallCheck(this, HomeView);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _super.call.apply(_super, [this].concat(args));
+
+    _defineProperty(_assertThisInitialized(_this), "_parentElement", document.querySelector('.container'));
+
+    _defineProperty(_assertThisInitialized(_this), "_errorMessage", 'There was a problem, please try again 😕');
+
+    _defineProperty(_assertThisInitialized(_this), "_message", '');
+
+    return _this;
+  }
+
+  _createClass(HomeView, [{
+    key: "addHandlerRender",
+    value: function addHandlerRender(handler) {
+      ['hashchange', 'load'].forEach(function (ev) {
+        return window.addEventListener(ev, handler);
+      });
+    }
+  }]);
+
+  return HomeView;
+}(_View2.default);
+
+;
+
+var _default = new HomeView();
+
+exports.default = _default;
+},{"./View.js":"js/views/View.js"}],"js/views/searchView.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var SearchView = /*#__PURE__*/function () {
+  function SearchView() {
+    _classCallCheck(this, SearchView);
+
+    _defineProperty(this, "_parentEl", document.querySelector('.search'));
+  }
+
+  _createClass(SearchView, [{
+    key: "getQuery",
+    value: function getQuery() {
+      var query = this._parentEl.querySelector('.searchInput').value;
+
+      this._clearInput();
+
+      return query;
+    }
+  }, {
+    key: "_clearInput",
+    value: function _clearInput() {
+      this._parentEl.querySelector('.searchInput').value = '';
+    }
+  }, {
+    key: "addHandlerSearch",
+    value: function addHandlerSearch(handler) {
+      this._parentEl.addEventListener('submit', function (e) {
+        e.preventDefault();
+        window.location.hash = 'search';
+        handler();
+      });
+    }
+  }]);
+
+  return SearchView;
+}();
+
+var _default = new SearchView();
+
+exports.default = _default;
+},{}],"js/views/previewView.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _View2 = _interopRequireDefault(require("./View.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var PreviewView = /*#__PURE__*/function (_View) {
+  _inherits(PreviewView, _View);
+
+  var _super = _createSuper(PreviewView);
+
+  function PreviewView() {
+    var _this;
+
+    _classCallCheck(this, PreviewView);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _super.call.apply(_super, [this].concat(args));
+
+    _defineProperty(_assertThisInitialized(_this), "_parentElement", '');
+
+    return _this;
+  }
+
+  _createClass(PreviewView, [{
+    key: "_generateMarkup",
+    value: function _generateMarkup() {
+      var id = window.location.hash.slice(1);
+      return "\n      <li class=\"preview\">\n        <a href=\"#country/".concat(this._data.code, "\">\n          <figure class=\"preview__fig\">\n            <img src=\"").concat(this._data.flag, "\" alt=\"").concat(this._data.name, "\" />\n          </figure>\n          <div class=\"preview__data\">\n            <h4 class=\"preview__title\">").concat(this._data.name, "</h4>\n\n          </div>\n        </a>\n      </li>\n    ");
+    }
+  }]);
+
+  return PreviewView;
+}(_View2.default);
+
+var _default = new PreviewView();
+
+exports.default = _default;
+},{"./View.js":"js/views/View.js"}],"js/views/resultsView.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _View2 = _interopRequireDefault(require("./View.js"));
+
+var _previewView = _interopRequireDefault(require("./previewView.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var ResultsView = /*#__PURE__*/function (_View) {
+  _inherits(ResultsView, _View);
+
+  var _super = _createSuper(ResultsView);
+
+  function ResultsView() {
+    var _this;
+
+    _classCallCheck(this, ResultsView);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _super.call.apply(_super, [this].concat(args));
+
+    _defineProperty(_assertThisInitialized(_this), "_parentElement", document.querySelector('.container'));
+
+    _defineProperty(_assertThisInitialized(_this), "_errorMessage", 'No countries were found 😕, please try another search 😀');
+
+    _defineProperty(_assertThisInitialized(_this), "_message", '');
+
+    return _this;
+  }
+
+  _createClass(ResultsView, [{
+    key: "_generateMarkup",
+    value: function _generateMarkup() {
+      return this._data.map(function (result) {
+        return _previewView.default.render(result, false);
+      }).join('');
+    }
+  }]);
+
+  return ResultsView;
+}(_View2.default);
+
+var _default = new ResultsView();
+
+exports.default = _default;
+},{"./View.js":"js/views/View.js","./previewView.js":"js/views/previewView.js"}],"js/views/countryView.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _View2 = _interopRequireDefault(require("./View.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var RecipeView = /*#__PURE__*/function (_View) {
+  _inherits(RecipeView, _View);
+
+  var _super = _createSuper(RecipeView);
+
+  function RecipeView() {
+    var _this;
+
+    _classCallCheck(this, RecipeView);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _super.call.apply(_super, [this].concat(args));
+
+    _defineProperty(_assertThisInitialized(_this), "_parentElement", document.querySelector('.container'));
+
+    _defineProperty(_assertThisInitialized(_this), "_errorMessage", 'There was a problem, please try again 😕');
+
+    _defineProperty(_assertThisInitialized(_this), "_message", '');
+
+    return _this;
+  }
+
+  _createClass(RecipeView, [{
+    key: "addHandlerRender",
+    value: function addHandlerRender(handler) {
+      ['hashchange', 'load'].forEach(function (ev) {
+        return window.addEventListener(ev, handler);
+      });
+    }
+  }, {
+    key: "_generateMarkup",
+    value: function _generateMarkup() {
+      var translations = Object.entries(this._data.translations);
+      return "\n      <div class=\"country\">\n        <div class=\"countryIntro\">\n            <div class=\"countryData\">\n                <h2>".concat(this._data.name, "</h2>\n                <h3>Native Name: </h3><span>").concat(this._data.nativeName, "</span>\n                <h3>Capital: </h3><span>").concat(this._data.capital, "</span>\n\n            </div>\n            <figure>\n                <img src=\"").concat(this._data.flag, "\" alt=\"").concat(this._data.name, "\" />\n            </figure>\n        </div>\n        <div class=\"countryInfo\">\n            <h3>Fun facts!</h3>\n            <p>").concat(this._data.name, " is over ").concat(this._data.area, " square km!!! \uD83E\uDD2F</p>\n            <p>").concat(this._data.name, " has a population of ").concat(this._data.population, " people \uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67\u200D\uD83D\uDC66</p>\n            <p>Their demonym is ").concat(this._data.demonym, " \uD83E\uDD20</p>\n            <p>").concat(this._data.name, " is inside the continent ").concat(this._data.region, " and if we want to be picky is inside the ").concat(this._data.subregion, " region \uD83C\uDF0F</p>\n            <p>").concat(this._data.timezones.map(this._generateArrayMarkup).join(', '), " \n            ").concat(this._data.timezones.length > 1 ? 'are the timezones' : 'is the timezone', " of this country \u231A</p>\n            <p>").concat(this._data.name, " shares ").concat(this._data.borders.length > 1 ? 'borders' : 'border', " with ").concat(this._data.borders.map(this._generateBordersMarkup).join(', '), "</p>\n            \n            <p>People in ").concat(this._data.name, " speak ").concat(this._data.languages.map(this._generateObjectMarkup).join(', '), "</p>\n            <p>These are recognized as their official names: ").concat(this._data.officialName.map(this._generateArrayMarkup).join(', '), " </p>\n            <p>This is the way people call ").concat(this._data.name, " in other languages</p>\n            <ul>\n                ").concat(translations.map(this._generateTranslationMarkup).join(''), "\n            </ul>\n            <p>In ").concat(this._data.name, "  people pay their bills \uD83D\uDCB8\uD83D\uDCB0 with: </p>\n            <ul>\n                ").concat(this._data.currencies.map(this._generateObjectMarkup).join(''), "\n            </ul>\n        </div>\n    </div>\n    ");
+    }
+  }, {
+    key: "_generateArrayMarkup",
+    value: function _generateArrayMarkup(value) {
+      return "<span>".concat(value, "</span>");
+    }
+  }, {
+    key: "_generateObjectMarkup",
+    value: function _generateObjectMarkup(dataObj) {
+      if ('nativeName' in dataObj) {
+        return "<span>".concat(dataObj.nativeName, " (").concat(dataObj.name, ")</span>");
+      } else {
+        return "<li>\n    <p>".concat(dataObj.name, ", its code is ").concat(dataObj.code, " and the symbol is ").concat(dataObj.symbol, "</p>\n    </li>");
+      }
+
+      ;
+    }
+  }, {
+    key: "_generateBordersMarkup",
+    value: function _generateBordersMarkup(country) {
+      return "<span><a href=\"#country/".concat(country, "\">").concat(country, "</a><span>");
+    }
+  }, {
+    key: "_generateTranslationMarkup",
+    value: function _generateTranslationMarkup(translations) {
+      var languages = {
+        br: "Portuguese (Brazil)",
+        de: "German",
+        es: "Spanish",
+        fa: "Farsi",
+        fr: "French",
+        hr: "Croatian",
+        it: "Italian",
+        ja: "Japanese",
+        nl: "Dutch",
+        pt: "Portuguese (Portugal)"
+      };
+      return "<li>\n    <p>".concat(translations[1], " in ").concat(languages[translations[0]], " </p>\n    </li>");
+    }
+  }]);
+
+  return RecipeView;
+}(_View2.default);
+
+;
+
+var _default = new RecipeView();
+
+exports.default = _default;
+},{"./View.js":"js/views/View.js"}],"js/views/regionsView.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _View2 = _interopRequireDefault(require("./View"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var RegionsView = /*#__PURE__*/function (_View) {
+  _inherits(RegionsView, _View);
+
+  var _super = _createSuper(RegionsView);
+
+  function RegionsView() {
+    var _this;
+
+    _classCallCheck(this, RegionsView);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _super.call.apply(_super, [this].concat(args));
+
+    _defineProperty(_assertThisInitialized(_this), "_parentElement", document.querySelector('.container'));
+
+    _defineProperty(_assertThisInitialized(_this), "_errorMessage", 'We could not find that recipe. Please try another one!');
+
+    _defineProperty(_assertThisInitialized(_this), "_message", '');
+
+    return _this;
+  }
+
+  _createClass(RegionsView, [{
+    key: "addHandlerRender",
+    value: function addHandlerRender(handler) {
+      ['hashchange', 'load'].forEach(function (ev) {
+        return window.addEventListener(ev, handler);
+      });
+    }
+  }, {
+    key: "_generateMarkup",
+    value: function _generateMarkup() {
+      var _this2 = this;
+
+      var regionsView = "";
+      Object.entries(this._data).forEach(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2),
+            region = _ref2[0],
+            countries = _ref2[1];
+
+        regionsView += _this2._generateRegionMarkup(region, countries);
+      });
+      return "<div>\n        ".concat(regionsView, "\n        </div>");
+    }
+  }, {
+    key: "_generateRegionMarkup",
+    value: function _generateRegionMarkup(region, countries) {
+      return "\n        <h2>".concat(region, "</h2>\n        <ul>\n            ").concat(countries.map(this._generataCountryMarkup).join(''), "\n        </ul>");
+    }
+  }, {
+    key: "_generataCountryMarkup",
+    value: function _generataCountryMarkup(country) {
+      return "<li><a href=\"#country/".concat(country.code, "\">").concat(country.name, "</a></li>");
+    }
+  }]);
+
+  return RegionsView;
+}(_View2.default);
+
+;
+
+var _default = new RegionsView();
+
+exports.default = _default;
+},{"./View":"js/views/View.js"}],"js/views/paginationView.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _View2 = _interopRequireDefault(require("./View.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var PaginationView = /*#__PURE__*/function (_View) {
+  _inherits(PaginationView, _View);
+
+  var _super = _createSuper(PaginationView);
+
+  function PaginationView() {
+    var _this;
+
+    _classCallCheck(this, PaginationView);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = _super.call.apply(_super, [this].concat(args));
+
+    _defineProperty(_assertThisInitialized(_this), "_parentElement", document.querySelector('.pagination'));
+
+    return _this;
+  }
+
+  _createClass(PaginationView, [{
+    key: "addHandlerClick",
+    value: function addHandlerClick(handler) {
+      this._parentElement.addEventListener('click', function (e) {
+        var btn = e.target.closest('.btn--inline');
+        if (!btn) return;
+        var goToPage = +btn.dataset.goto;
+        handler(goToPage);
+      });
+    }
+  }, {
+    key: "_generateMarkup",
+    value: function _generateMarkup() {
+      console.log(this._data);
+      var curPage = this._data.page;
+      var numPages = Math.ceil(this._data.results.length / this._data.resultsPerPage);
+      console.log(curPage); // Page 1
+
+      if (curPage === 1 && numPages > 1) {
+        return "\n        <button data-goto=\"".concat(curPage + 1, "\" class=\"btn--inline pagination__btn--next\">\n          <span>Page ").concat(curPage + 1, "</span>\n        </button>\n        <button data-goto=\"").concat(numPages, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ").concat(numPages, "</span>\n        </button>\n        ");
+      }
+
+      ; // Last page
+
+      if (curPage === numPages && numPages > 1) {
+        return "\n      <button data-goto=\"".concat(1, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ", 1, "</span>\n        </button>\n        <button data-goto=\"", curPage - 1, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ").concat(curPage - 1, "</span>\n        </button>\n        ");
+      }
+
+      ; // Page 2
+
+      if (curPage === 2) {
+        return "\n      <button data-goto=\"".concat(1, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ", 1, "</span>\n        </button>\n        <button data-goto=\"", curPage + 1, "\" class=\"btn--inline pagination__btn--next\">\n          <span>Page ").concat(curPage + 1, "</span>\n        </button>\n        <button data-goto=\"").concat(numPages, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ").concat(numPages, "</span>\n        </button>\n      ");
+      }
+
+      ; // Second to last
+
+      if (curPage === 7) {
+        return "\n      <button data-goto=\"".concat(1, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ", 1, "</span>\n        </button>\n        <button data-goto=\"", curPage - 1, "\" class=\"btn--inline pagination__btn--next\">\n          <span>Page ").concat(curPage - 1, "</span>\n        </button>\n        <button data-goto=\"").concat(numPages, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ").concat(numPages, "</span>\n        </button>\n      ");
+      }
+
+      ; // Other page
+
+      if (curPage > 2 && curPage < numPages) {
+        return "\n      <button data-goto=\"".concat(1, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ", 1, "</span>\n        </button>\n        <button data-goto=\"", curPage - 1, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ").concat(curPage - 1, "</span>\n        </button>\n        <button data-goto=\"").concat(curPage + 1, "\" class=\"btn--inline pagination__btn--next\">\n          <span>Page ").concat(curPage + 1, "</span>\n        </button>\n        <button data-goto=\"").concat(numPages, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ").concat(numPages, "</span>\n        </button>\n      ");
+      }
+
+      ; // Page 1, and there are NO other pages
+
+      return '';
+    }
+  }]);
+
+  return PaginationView;
+}(_View2.default);
+
+;
+
+var _default = new PaginationView();
+
+exports.default = _default;
+},{"./View.js":"js/views/View.js"}],"js/controller.js":[function(require,module,exports) {
+"use strict";
+
+var _regeneratorRuntime = require("regenerator-runtime");
+
 var model = _interopRequireWildcard(require("./model.js"));
+
+var _homeView = _interopRequireDefault(require("./views/homeView.js"));
+
+var _searchView = _interopRequireDefault(require("./views/searchView.js"));
+
+var _resultsView = _interopRequireDefault(require("./views/resultsView.js"));
+
+var _countryView = _interopRequireDefault(require("./views/countryView.js"));
+
+var _regionsView = _interopRequireDefault(require("./views/regionsView.js"));
+
+var _paginationView = _interopRequireDefault(require("./views/paginationView"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
@@ -1205,49 +1925,232 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-var fun = /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(code) {
+var controlSearchResults = /*#__PURE__*/function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+    var query;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _context.next = 2;
-            return model.loadCountry(code);
+            _context.prev = 0;
+            query = _searchView.default.getQuery();
 
-          case 2:
-            _context.next = 4;
-            return model.loadCountryList();
+            if (query) {
+              _context.next = 4;
+              break;
+            }
+
+            return _context.abrupt("return");
 
           case 4:
             _context.next = 6;
-            return model.searchCountry("us");
+            return model.searchCountry(query);
 
           case 6:
             _context.next = 8;
-            return model.countryResultsPage(3);
+            return model.loadCountryList();
 
           case 8:
-            _context.next = 10;
-            return model.countryResultsRegion('europe');
+            _resultsView.default.render(model.countryResultsPage('search'));
 
-          case 10:
-            console.log(model.state);
+            _paginationView.default.render(' ');
 
-          case 11:
+            _context.next = 16;
+            break;
+
+          case 12:
+            _context.prev = 12;
+            _context.t0 = _context["catch"](0);
+
+            _resultsView.default.renderError();
+
+            console.log(_context.t0);
+
+          case 16:
+            ;
+
+          case 17:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee);
+    }, _callee, null, [[0, 12]]);
   }));
 
-  return function fun(_x) {
+  return function controlSearchResults() {
     return _ref.apply(this, arguments);
   };
 }();
 
-fun('MEX');
-},{"./model.js":"js/model.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+var controlCountry = /*#__PURE__*/function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+    var location, code;
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.prev = 0;
+            location = window.location.hash.slice(1, 8);
+
+            if (!(location === "country")) {
+              _context2.next = 8;
+              break;
+            }
+
+            code = window.location.hash.slice(9);
+            _context2.next = 6;
+            return model.loadCountry(code);
+
+          case 6:
+            _countryView.default.render(model.state.country);
+
+            _paginationView.default.render(' ');
+
+          case 8:
+            ;
+            _context2.next = 15;
+            break;
+
+          case 11:
+            _context2.prev = 11;
+            _context2.t0 = _context2["catch"](0);
+
+            _countryView.default.renderError();
+
+            console.log(_context2.t0);
+
+          case 15:
+            ;
+
+          case 16:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2, null, [[0, 11]]);
+  }));
+
+  return function controlCountry() {
+    return _ref2.apply(this, arguments);
+  };
+}();
+
+var controlRegions = /*#__PURE__*/function () {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+    var location;
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            _context3.prev = 0;
+            location = window.location.hash;
+
+            if (!(location === "#regions")) {
+              _context3.next = 7;
+              break;
+            }
+
+            _context3.next = 5;
+            return model.loadCountryList();
+
+          case 5:
+            _regionsView.default.render(model.state.regions);
+
+            _paginationView.default.render(' ');
+
+          case 7:
+            ;
+            _context3.next = 12;
+            break;
+
+          case 10:
+            _context3.prev = 10;
+            _context3.t0 = _context3["catch"](0);
+
+          case 12:
+            ;
+
+          case 13:
+          case "end":
+            return _context3.stop();
+        }
+      }
+    }, _callee3, null, [[0, 10]]);
+  }));
+
+  return function controlRegions() {
+    return _ref3.apply(this, arguments);
+  };
+}();
+
+var controlHome = /*#__PURE__*/function () {
+  var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
+    var location;
+    return regeneratorRuntime.wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            _context4.prev = 0;
+            location = window.location.hash;
+
+            if (!(location === "" || location === "#home")) {
+              _context4.next = 7;
+              break;
+            }
+
+            _context4.next = 5;
+            return model.loadCountryList();
+
+          case 5:
+            _resultsView.default.render(model.countryResultsPage());
+
+            _paginationView.default.render(model.state.countryList);
+
+          case 7:
+            ;
+            _context4.next = 12;
+            break;
+
+          case 10:
+            _context4.prev = 10;
+            _context4.t0 = _context4["catch"](0);
+
+          case 12:
+            ;
+
+          case 13:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4, null, [[0, 10]]);
+  }));
+
+  return function controlHome() {
+    return _ref4.apply(this, arguments);
+  };
+}();
+
+var controlPagination = function controlPagination(goToPage) {
+  _resultsView.default.render(model.countryResultsPage('', goToPage));
+
+  _paginationView.default.render(model.state.countryList);
+};
+
+var init = function init() {
+  _homeView.default.addHandlerRender(controlHome);
+
+  _regionsView.default.addHandlerRender(controlRegions);
+
+  _countryView.default.addHandlerRender(controlCountry);
+
+  _paginationView.default.addHandlerClick(controlPagination);
+
+  _searchView.default.addHandlerSearch(controlSearchResults);
+};
+
+init();
+},{"regenerator-runtime":"../node_modules/regenerator-runtime/runtime.js","./model.js":"js/model.js","./views/homeView.js":"js/views/homeView.js","./views/searchView.js":"js/views/searchView.js","./views/resultsView.js":"js/views/resultsView.js","./views/countryView.js":"js/views/countryView.js","./views/regionsView.js":"js/views/regionsView.js","./views/paginationView":"js/views/paginationView.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -1275,7 +2178,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62266" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56947" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

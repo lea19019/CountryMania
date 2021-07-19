@@ -29,6 +29,7 @@
     "sass": "^1.35.2"
   },
   "dependencies": {
+    "fractional": "^1.0.0",
     "regenerator-runtime": "^0.13.7"
   },
   "resolutions": {}

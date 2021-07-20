@@ -7,12 +7,16 @@ $bp-medium: 61.25em; // 980px
 $bp-small: 37.5em; // 600px
 $bp-smallest: 31.25em; // 500px
 
-$brand-primary : #ffe8dd;
-$nav-color : #247cff;
-$title-color: rgb(24, 88, 207);
+$back-color : #efffeb;
+$nav-color : #2495ff;
+$text-color: #2495ff;
+$title-color: rgb(43, 151, 43);
 $link-hover: rgb(161, 161, 161);
+$country-color: rgb(188, 245, 248);
 
 @import url('https://fonts.googleapis.com/css2?family=Fredericka+the+Great&family=Overlock+SC&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
 
 $nav-font: 'Overlock SC';
 $title-font: 'Fredericka the Great';
+$body-font: 'Lato';

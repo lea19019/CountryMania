@@ -11,10 +11,13 @@ const controlSearchResults = async () => {
     try {
         const query = searchView.getQuery();
         if (!query) return;
+
         await model.searchCountry(query);
         await model.loadCountryList();
-        resultsView.render(model.countryResultsPage('search'));
+        countryView.render(' ');
+        regionsView.render(' ');
         paginationView.render(' ');
+        resultsView.render(model.countryResultsPage('search'));
     } catch (err) {
         resultsView.renderError();
         console.log(err);
@@ -29,6 +32,8 @@ const controlCountry = async () => {
             const code = window.location.hash.slice(9);
             await model.loadCountry(code);
             countryView.render(model.state.country);
+            regionsView.render(' ');
+            resultsView.render(' ');
             paginationView.render(' ');
         };
     } catch (err) {
@@ -43,10 +48,13 @@ const controlRegions = async () => {
         if (location === "#regions") {
             await model.loadCountryList();
             regionsView.render(model.state.regions);
+            resultsView.render(' ');
+            countryView.render(' ');
             paginationView.render(' ');
         };
     } catch (err) {
-
+        regionsView.renderError();
+        console.log(err);
     };
 };
 
@@ -56,6 +64,8 @@ const controlHome = async () => {
         const location = window.location.hash;
         if (location === "" || location === "#home") {
             await model.loadCountryList();
+            regionsView.render(' ');
+            countryView.render(' ')
             resultsView.render(model.countryResultsPage());
             paginationView.render(model.state.countryList);
         };

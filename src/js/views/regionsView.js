@@ -1,8 +1,8 @@
 import View from "./View";
 
 class RegionsView extends View {
-    _parentElement = document.querySelector('.container');
-    _errorMessage = 'We could not find that recipe. Please try another one!';
+    _parentElement = document.querySelector('.regionsContainer');
+    _errorMessage = 'There was a problem, please try again 😕';
     _message = '';
 
     addHandlerRender(handler) {
@@ -14,17 +14,19 @@ class RegionsView extends View {
         Object.entries(this._data).forEach(([region, countries]) => {
             regionsView += this._generateRegionMarkup(region, countries);
         });
-        return `<div>
+        return `
         ${regionsView}
-        </div>`;
+        `;
     }
 
     _generateRegionMarkup(region, countries) {
-        return `
+        return `<div class="region">
         <h2>${region}</h2>
+        <hr>
         <ul>
             ${countries.map(this._generataCountryMarkup).join('')}
-        </ul>`;
+        </ul>
+        </div>`;
     }
 
     _generataCountryMarkup(country) {

@@ -1,7 +1,7 @@
 import View from './View.js';
 
-class RecipeView extends View {
-  _parentElement = document.querySelector('.container');
+class CountryView extends View {
+  _parentElement = document.querySelector('.countryContainer');
   _errorMessage = 'There was a problem, please try again 😕';
   _message = '';
 
@@ -17,8 +17,9 @@ class RecipeView extends View {
         <div class="countryIntro">
             <div class="countryData">
                 <h2>${this._data.name}</h2>
-                <h3>Native Name: </h3><span>${this._data.nativeName}</span>
-                <h3>Capital: </h3><span>${this._data.capital}</span>
+                <hr>
+                <h3>${this._data.nativeName}</h3><span>Native Name</span>
+                <h3>${this._data.capital}</h3><span>Capital</span>
 
             </div>
             <figure>
@@ -27,6 +28,7 @@ class RecipeView extends View {
         </div>
         <div class="countryInfo">
             <h3>Fun facts!</h3>
+            <hr>
             <p>${this._data.name} is over ${this._data.area} square km!!! 🤯</p>
             <p>${this._data.name} has a population of ${this._data.population} people 👨‍👩‍👧‍👦</p>
             <p>Their demonym is ${this._data.demonym} 🤠</p>
@@ -89,4 +91,4 @@ class RecipeView extends View {
 
 };
 
-export default new RecipeView();
+export default new CountryView();

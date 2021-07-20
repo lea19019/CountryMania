@@ -874,9 +874,7 @@ try {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.COUNTRY_PER_PAGE = exports.API_URL = exports.REGIONS = void 0;
-var REGIONS = ['africa', 'america', 'asia', 'europe', 'oceania'];
-exports.REGIONS = REGIONS;
+exports.COUNTRY_PER_PAGE = exports.API_URL = void 0;
 var API_URL = 'https://restcountries.eu/rest/v2/';
 exports.API_URL = API_URL;
 var COUNTRY_PER_PAGE = 32;
@@ -1217,7 +1215,6 @@ var View = /*#__PURE__*/function () {
       var _render = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
       if (!data || Array.isArray(data) && data.length === 0) return this.renderError();
-      console.log(data);
       if (data === ' ') return this._clear();
       this._data = data;
 
@@ -1313,7 +1310,7 @@ var HomeView = /*#__PURE__*/function (_View) {
 
     _this = _super.call.apply(_super, [this].concat(args));
 
-    _defineProperty(_assertThisInitialized(_this), "_parentElement", document.querySelector('.container'));
+    _defineProperty(_assertThisInitialized(_this), "_parentElement", document.querySelector('.countriesContainer'));
 
     _defineProperty(_assertThisInitialized(_this), "_errorMessage", 'There was a problem, please try again 😕');
 
@@ -1454,7 +1451,7 @@ var PreviewView = /*#__PURE__*/function (_View) {
     key: "_generateMarkup",
     value: function _generateMarkup() {
       var id = window.location.hash.slice(1);
-      return "\n      <li class=\"preview\">\n        <a href=\"#country/".concat(this._data.code, "\">\n          <figure class=\"preview__fig\">\n            <img src=\"").concat(this._data.flag, "\" alt=\"").concat(this._data.name, "\" />\n          </figure>\n          <div class=\"preview__data\">\n            <h4 class=\"preview__title\">").concat(this._data.name, "</h4>\n\n          </div>\n        </a>\n      </li>\n    ");
+      return "\n      <li class=\"countryPreview\">\n        <a href=\"#country/".concat(this._data.code, "\">\n          <figure class=\"countryFlag\">\n            <img src=\"").concat(this._data.flag, "\" alt=\"").concat(this._data.name, "\" />\n          </figure>\n            <h3 class=\"countryName\">").concat(this._data.name, "</h3>\n        </a>\n      </li>\n    ");
     }
   }]);
 
@@ -1518,7 +1515,7 @@ var ResultsView = /*#__PURE__*/function (_View) {
 
     _this = _super.call.apply(_super, [this].concat(args));
 
-    _defineProperty(_assertThisInitialized(_this), "_parentElement", document.querySelector('.container'));
+    _defineProperty(_assertThisInitialized(_this), "_parentElement", document.querySelector('.countriesContainer'));
 
     _defineProperty(_assertThisInitialized(_this), "_errorMessage", 'No countries were found 😕, please try another search 😀');
 
@@ -1578,15 +1575,15 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var RecipeView = /*#__PURE__*/function (_View) {
-  _inherits(RecipeView, _View);
+var CountryView = /*#__PURE__*/function (_View) {
+  _inherits(CountryView, _View);
 
-  var _super = _createSuper(RecipeView);
+  var _super = _createSuper(CountryView);
 
-  function RecipeView() {
+  function CountryView() {
     var _this;
 
-    _classCallCheck(this, RecipeView);
+    _classCallCheck(this, CountryView);
 
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
@@ -1594,7 +1591,7 @@ var RecipeView = /*#__PURE__*/function (_View) {
 
     _this = _super.call.apply(_super, [this].concat(args));
 
-    _defineProperty(_assertThisInitialized(_this), "_parentElement", document.querySelector('.container'));
+    _defineProperty(_assertThisInitialized(_this), "_parentElement", document.querySelector('.countryContainer'));
 
     _defineProperty(_assertThisInitialized(_this), "_errorMessage", 'There was a problem, please try again 😕');
 
@@ -1603,7 +1600,7 @@ var RecipeView = /*#__PURE__*/function (_View) {
     return _this;
   }
 
-  _createClass(RecipeView, [{
+  _createClass(CountryView, [{
     key: "addHandlerRender",
     value: function addHandlerRender(handler) {
       ['hashchange', 'load'].forEach(function (ev) {
@@ -1614,7 +1611,7 @@ var RecipeView = /*#__PURE__*/function (_View) {
     key: "_generateMarkup",
     value: function _generateMarkup() {
       var translations = Object.entries(this._data.translations);
-      return "\n      <div class=\"country\">\n        <div class=\"countryIntro\">\n            <div class=\"countryData\">\n                <h2>".concat(this._data.name, "</h2>\n                <h3>Native Name: </h3><span>").concat(this._data.nativeName, "</span>\n                <h3>Capital: </h3><span>").concat(this._data.capital, "</span>\n\n            </div>\n            <figure>\n                <img src=\"").concat(this._data.flag, "\" alt=\"").concat(this._data.name, "\" />\n            </figure>\n        </div>\n        <div class=\"countryInfo\">\n            <h3>Fun facts!</h3>\n            <p>").concat(this._data.name, " is over ").concat(this._data.area, " square km!!! \uD83E\uDD2F</p>\n            <p>").concat(this._data.name, " has a population of ").concat(this._data.population, " people \uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67\u200D\uD83D\uDC66</p>\n            <p>Their demonym is ").concat(this._data.demonym, " \uD83E\uDD20</p>\n            <p>").concat(this._data.name, " is inside the continent ").concat(this._data.region, " and if we want to be picky is inside the ").concat(this._data.subregion, " region \uD83C\uDF0F</p>\n            <p>").concat(this._data.timezones.map(this._generateArrayMarkup).join(', '), " \n            ").concat(this._data.timezones.length > 1 ? 'are the timezones' : 'is the timezone', " of this country \u231A</p>\n            <p>").concat(this._data.name, " shares ").concat(this._data.borders.length > 1 ? 'borders' : 'border', " with ").concat(this._data.borders.map(this._generateBordersMarkup).join(', '), "</p>\n            \n            <p>People in ").concat(this._data.name, " speak ").concat(this._data.languages.map(this._generateObjectMarkup).join(', '), "</p>\n            <p>These are recognized as their official names: ").concat(this._data.officialName.map(this._generateArrayMarkup).join(', '), " </p>\n            <p>This is the way people call ").concat(this._data.name, " in other languages</p>\n            <ul>\n                ").concat(translations.map(this._generateTranslationMarkup).join(''), "\n            </ul>\n            <p>In ").concat(this._data.name, "  people pay their bills \uD83D\uDCB8\uD83D\uDCB0 with: </p>\n            <ul>\n                ").concat(this._data.currencies.map(this._generateObjectMarkup).join(''), "\n            </ul>\n        </div>\n    </div>\n    ");
+      return "\n      <div class=\"country\">\n        <div class=\"countryIntro\">\n            <div class=\"countryData\">\n                <h2>".concat(this._data.name, "</h2>\n                <hr>\n                <h3>").concat(this._data.nativeName, "</h3><span>Native Name</span>\n                <h3>").concat(this._data.capital, "</h3><span>Capital</span>\n\n            </div>\n            <figure>\n                <img src=\"").concat(this._data.flag, "\" alt=\"").concat(this._data.name, "\" />\n            </figure>\n        </div>\n        <div class=\"countryInfo\">\n            <h3>Fun facts!</h3>\n            <hr>\n            <p>").concat(this._data.name, " is over ").concat(this._data.area, " square km!!! \uD83E\uDD2F</p>\n            <p>").concat(this._data.name, " has a population of ").concat(this._data.population, " people \uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67\u200D\uD83D\uDC66</p>\n            <p>Their demonym is ").concat(this._data.demonym, " \uD83E\uDD20</p>\n            <p>").concat(this._data.name, " is inside the continent ").concat(this._data.region, " and if we want to be picky is inside the ").concat(this._data.subregion, " region \uD83C\uDF0F</p>\n            <p>").concat(this._data.timezones.map(this._generateArrayMarkup).join(', '), " \n            ").concat(this._data.timezones.length > 1 ? 'are the timezones' : 'is the timezone', " of this country \u231A</p>\n            <p>").concat(this._data.name, " shares ").concat(this._data.borders.length > 1 ? 'borders' : 'border', " with ").concat(this._data.borders.map(this._generateBordersMarkup).join(', '), "</p>\n            \n            <p>People in ").concat(this._data.name, " speak ").concat(this._data.languages.map(this._generateObjectMarkup).join(', '), "</p>\n            <p>These are recognized as their official names: ").concat(this._data.officialName.map(this._generateArrayMarkup).join(', '), " </p>\n            <p>This is the way people call ").concat(this._data.name, " in other languages</p>\n            <ul>\n                ").concat(translations.map(this._generateTranslationMarkup).join(''), "\n            </ul>\n            <p>In ").concat(this._data.name, "  people pay their bills \uD83D\uDCB8\uD83D\uDCB0 with: </p>\n            <ul>\n                ").concat(this._data.currencies.map(this._generateObjectMarkup).join(''), "\n            </ul>\n        </div>\n    </div>\n    ");
     }
   }, {
     key: "_generateArrayMarkup",
@@ -1656,12 +1653,12 @@ var RecipeView = /*#__PURE__*/function (_View) {
     }
   }]);
 
-  return RecipeView;
+  return CountryView;
 }(_View2.default);
 
 ;
 
-var _default = new RecipeView();
+var _default = new CountryView();
 
 exports.default = _default;
 },{"./View.js":"js/views/View.js"}],"js/views/regionsView.js":[function(require,module,exports) {
@@ -1728,9 +1725,9 @@ var RegionsView = /*#__PURE__*/function (_View) {
 
     _this = _super.call.apply(_super, [this].concat(args));
 
-    _defineProperty(_assertThisInitialized(_this), "_parentElement", document.querySelector('.container'));
+    _defineProperty(_assertThisInitialized(_this), "_parentElement", document.querySelector('.regionsContainer'));
 
-    _defineProperty(_assertThisInitialized(_this), "_errorMessage", 'We could not find that recipe. Please try another one!');
+    _defineProperty(_assertThisInitialized(_this), "_errorMessage", 'There was a problem, please try again 😕');
 
     _defineProperty(_assertThisInitialized(_this), "_message", '');
 
@@ -1757,12 +1754,12 @@ var RegionsView = /*#__PURE__*/function (_View) {
 
         regionsView += _this2._generateRegionMarkup(region, countries);
       });
-      return "<div>\n        ".concat(regionsView, "\n        </div>");
+      return "\n        ".concat(regionsView, "\n        ");
     }
   }, {
     key: "_generateRegionMarkup",
     value: function _generateRegionMarkup(region, countries) {
-      return "\n        <h2>".concat(region, "</h2>\n        <ul>\n            ").concat(countries.map(this._generataCountryMarkup).join(''), "\n        </ul>");
+      return "<div class=\"region\">\n        <h2>".concat(region, "</h2>\n        <hr>\n        <ul>\n            ").concat(countries.map(this._generataCountryMarkup).join(''), "\n        </ul>\n        </div>");
     }
   }, {
     key: "_generataCountryMarkup",
@@ -1849,37 +1846,35 @@ var PaginationView = /*#__PURE__*/function (_View) {
   }, {
     key: "_generateMarkup",
     value: function _generateMarkup() {
-      console.log(this._data);
       var curPage = this._data.page;
-      var numPages = Math.ceil(this._data.results.length / this._data.resultsPerPage);
-      console.log(curPage); // Page 1
+      var numPages = Math.ceil(this._data.results.length / this._data.resultsPerPage); // Page 1
 
       if (curPage === 1 && numPages > 1) {
-        return "\n        <button data-goto=\"".concat(curPage + 1, "\" class=\"btn--inline pagination__btn--next\">\n          <span>Page ").concat(curPage + 1, "</span>\n        </button>\n        <button data-goto=\"").concat(numPages, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ").concat(numPages, "</span>\n        </button>\n        ");
+        return "\n        <button data-goto=\"".concat(curPage + 1, "\" class=\"btn--inline pagination__btn--next\">\n          <span>").concat(curPage + 1, "</span>\n        </button>\n        <button data-goto=\"").concat(numPages, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>").concat(numPages, "</span>\n        </button>\n        ");
       }
 
       ; // Last page
 
       if (curPage === numPages && numPages > 1) {
-        return "\n      <button data-goto=\"".concat(1, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ", 1, "</span>\n        </button>\n        <button data-goto=\"", curPage - 1, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ").concat(curPage - 1, "</span>\n        </button>\n        ");
+        return "\n      <button data-goto=\"".concat(1, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>", 1, "</span>\n        </button>\n        <button data-goto=\"", curPage - 1, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>").concat(curPage - 1, "</span>\n        </button>\n        ");
       }
 
       ; // Page 2
 
       if (curPage === 2) {
-        return "\n      <button data-goto=\"".concat(1, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ", 1, "</span>\n        </button>\n        <button data-goto=\"", curPage + 1, "\" class=\"btn--inline pagination__btn--next\">\n          <span>Page ").concat(curPage + 1, "</span>\n        </button>\n        <button data-goto=\"").concat(numPages, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ").concat(numPages, "</span>\n        </button>\n      ");
+        return "\n      <button data-goto=\"".concat(1, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>", 1, "</span>\n        </button>\n        <button data-goto=\"", curPage + 1, "\" class=\"btn--inline pagination__btn--next\">\n          <span>").concat(curPage + 1, "</span>\n        </button>\n        <button data-goto=\"").concat(numPages, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>").concat(numPages, "</span>\n        </button>\n      ");
       }
 
       ; // Second to last
 
       if (curPage === 7) {
-        return "\n      <button data-goto=\"".concat(1, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ", 1, "</span>\n        </button>\n        <button data-goto=\"", curPage - 1, "\" class=\"btn--inline pagination__btn--next\">\n          <span>Page ").concat(curPage - 1, "</span>\n        </button>\n        <button data-goto=\"").concat(numPages, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ").concat(numPages, "</span>\n        </button>\n      ");
+        return "\n      <button data-goto=\"".concat(1, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>", 1, "</span>\n        </button>\n        <button data-goto=\"", curPage - 1, "\" class=\"btn--inline pagination__btn--next\">\n          <span>").concat(curPage - 1, "</span>\n        </button>\n        <button data-goto=\"").concat(numPages, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>").concat(numPages, "</span>\n        </button>\n      ");
       }
 
       ; // Other page
 
       if (curPage > 2 && curPage < numPages) {
-        return "\n      <button data-goto=\"".concat(1, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ", 1, "</span>\n        </button>\n        <button data-goto=\"", curPage - 1, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ").concat(curPage - 1, "</span>\n        </button>\n        <button data-goto=\"").concat(curPage + 1, "\" class=\"btn--inline pagination__btn--next\">\n          <span>Page ").concat(curPage + 1, "</span>\n        </button>\n        <button data-goto=\"").concat(numPages, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>Page ").concat(numPages, "</span>\n        </button>\n      ");
+        return "\n      <button data-goto=\"".concat(1, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>", 1, "</span>\n        </button>\n        <button data-goto=\"", curPage - 1, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>").concat(curPage - 1, "</span>\n        </button>\n        <button data-goto=\"").concat(curPage + 1, "\" class=\"btn--inline pagination__btn--next\">\n          <span>").concat(curPage + 1, "</span>\n        </button>\n        <button data-goto=\"").concat(numPages, "\" class=\"btn--inline pagination__btn--prev\">\n          <span>").concat(numPages, "</span>\n        </button>\n      ");
       }
 
       ; // Page 1, and there are NO other pages
@@ -1951,30 +1946,34 @@ var controlSearchResults = /*#__PURE__*/function () {
             return model.loadCountryList();
 
           case 8:
-            _resultsView.default.render(model.countryResultsPage('search'));
+            _countryView.default.render(' ');
+
+            _regionsView.default.render(' ');
 
             _paginationView.default.render(' ');
 
-            _context.next = 16;
+            _resultsView.default.render(model.countryResultsPage('search'));
+
+            _context.next = 18;
             break;
 
-          case 12:
-            _context.prev = 12;
+          case 14:
+            _context.prev = 14;
             _context.t0 = _context["catch"](0);
 
             _resultsView.default.renderError();
 
             console.log(_context.t0);
 
-          case 16:
+          case 18:
             ;
 
-          case 17:
+          case 19:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 12]]);
+    }, _callee, null, [[0, 14]]);
   }));
 
   return function controlSearchResults() {
@@ -1993,7 +1992,7 @@ var controlCountry = /*#__PURE__*/function () {
             location = window.location.hash.slice(1, 8);
 
             if (!(location === "country")) {
-              _context2.next = 8;
+              _context2.next = 10;
               break;
             }
 
@@ -2004,30 +2003,34 @@ var controlCountry = /*#__PURE__*/function () {
           case 6:
             _countryView.default.render(model.state.country);
 
+            _regionsView.default.render(' ');
+
+            _resultsView.default.render(' ');
+
             _paginationView.default.render(' ');
 
-          case 8:
+          case 10:
             ;
-            _context2.next = 15;
+            _context2.next = 17;
             break;
 
-          case 11:
-            _context2.prev = 11;
+          case 13:
+            _context2.prev = 13;
             _context2.t0 = _context2["catch"](0);
 
             _countryView.default.renderError();
 
             console.log(_context2.t0);
 
-          case 15:
+          case 17:
             ;
 
-          case 16:
+          case 18:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[0, 11]]);
+    }, _callee2, null, [[0, 13]]);
   }));
 
   return function controlCountry() {
@@ -2046,7 +2049,7 @@ var controlRegions = /*#__PURE__*/function () {
             location = window.location.hash;
 
             if (!(location === "#regions")) {
-              _context3.next = 7;
+              _context3.next = 9;
               break;
             }
 
@@ -2056,26 +2059,34 @@ var controlRegions = /*#__PURE__*/function () {
           case 5:
             _regionsView.default.render(model.state.regions);
 
+            _resultsView.default.render(' ');
+
+            _countryView.default.render(' ');
+
             _paginationView.default.render(' ');
 
-          case 7:
+          case 9:
             ;
-            _context3.next = 12;
+            _context3.next = 16;
             break;
 
-          case 10:
-            _context3.prev = 10;
+          case 12:
+            _context3.prev = 12;
             _context3.t0 = _context3["catch"](0);
 
-          case 12:
+            _regionsView.default.renderError();
+
+            console.log(_context3.t0);
+
+          case 16:
             ;
 
-          case 13:
+          case 17:
           case "end":
             return _context3.stop();
         }
       }
-    }, _callee3, null, [[0, 10]]);
+    }, _callee3, null, [[0, 12]]);
   }));
 
   return function controlRegions() {
@@ -2094,7 +2105,7 @@ var controlHome = /*#__PURE__*/function () {
             location = window.location.hash;
 
             if (!(location === "" || location === "#home")) {
-              _context4.next = 7;
+              _context4.next = 9;
               break;
             }
 
@@ -2102,28 +2113,32 @@ var controlHome = /*#__PURE__*/function () {
             return model.loadCountryList();
 
           case 5:
+            _regionsView.default.render(' ');
+
+            _countryView.default.render(' ');
+
             _resultsView.default.render(model.countryResultsPage());
 
             _paginationView.default.render(model.state.countryList);
 
-          case 7:
+          case 9:
             ;
-            _context4.next = 12;
+            _context4.next = 14;
             break;
 
-          case 10:
-            _context4.prev = 10;
+          case 12:
+            _context4.prev = 12;
             _context4.t0 = _context4["catch"](0);
 
-          case 12:
+          case 14:
             ;
 
-          case 13:
+          case 15:
           case "end":
             return _context4.stop();
         }
       }
-    }, _callee4, null, [[0, 10]]);
+    }, _callee4, null, [[0, 12]]);
   }));
 
   return function controlHome() {
@@ -2178,7 +2193,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56947" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51125" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

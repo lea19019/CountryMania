@@ -14,21 +14,19 @@ class PaginationView extends View {
   };
 
   _generateMarkup() {
-    console.log(this._data)
     const curPage = this._data.page;
     const numPages = Math.ceil(
       this._data.results.length / this._data.resultsPerPage
     );
-    console.log(curPage);
 
     // Page 1
     if (curPage === 1 && numPages > 1) {
       return `
         <button data-goto="${curPage + 1}" class="btn--inline pagination__btn--next">
-          <span>Page ${curPage + 1}</span>
+          <span>${curPage + 1}</span>
         </button>
         <button data-goto="${numPages}" class="btn--inline pagination__btn--prev">
-          <span>Page ${numPages}</span>
+          <span>${numPages}</span>
         </button>
         `;
     };
@@ -37,10 +35,10 @@ class PaginationView extends View {
     if (curPage === numPages && numPages > 1) {
       return `
       <button data-goto="${1}" class="btn--inline pagination__btn--prev">
-          <span>Page ${1}</span>
+          <span>${1}</span>
         </button>
         <button data-goto="${curPage - 1}" class="btn--inline pagination__btn--prev">
-          <span>Page ${curPage - 1}</span>
+          <span>${curPage - 1}</span>
         </button>
         `;
     };
@@ -49,13 +47,13 @@ class PaginationView extends View {
     if (curPage === 2) {
       return `
       <button data-goto="${1}" class="btn--inline pagination__btn--prev">
-          <span>Page ${1}</span>
+          <span>${1}</span>
         </button>
         <button data-goto="${curPage + 1}" class="btn--inline pagination__btn--next">
-          <span>Page ${curPage + 1}</span>
+          <span>${curPage + 1}</span>
         </button>
         <button data-goto="${numPages}" class="btn--inline pagination__btn--prev">
-          <span>Page ${numPages}</span>
+          <span>${numPages}</span>
         </button>
       `;
     };
@@ -64,13 +62,13 @@ class PaginationView extends View {
     if (curPage === 7) {
       return `
       <button data-goto="${1}" class="btn--inline pagination__btn--prev">
-          <span>Page ${1}</span>
+          <span>${1}</span>
         </button>
         <button data-goto="${curPage - 1}" class="btn--inline pagination__btn--next">
-          <span>Page ${curPage - 1}</span>
+          <span>${curPage - 1}</span>
         </button>
         <button data-goto="${numPages}" class="btn--inline pagination__btn--prev">
-          <span>Page ${numPages}</span>
+          <span>${numPages}</span>
         </button>
       `;
     };
@@ -79,16 +77,16 @@ class PaginationView extends View {
     if (curPage > 2 && curPage < numPages) {
       return `
       <button data-goto="${1}" class="btn--inline pagination__btn--prev">
-          <span>Page ${1}</span>
+          <span>${1}</span>
         </button>
         <button data-goto="${curPage - 1}" class="btn--inline pagination__btn--prev">
-          <span>Page ${curPage - 1}</span>
+          <span>${curPage - 1}</span>
         </button>
         <button data-goto="${curPage + 1}" class="btn--inline pagination__btn--next">
-          <span>Page ${curPage + 1}</span>
+          <span>${curPage + 1}</span>
         </button>
         <button data-goto="${numPages}" class="btn--inline pagination__btn--prev">
-          <span>Page ${numPages}</span>
+          <span>${numPages}</span>
         </button>
       `;
     };

@@ -1,0 +1,16 @@
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2rem auto;
+
+    .btn--inline {
+        margin: 0 .5rem;
+        padding: .4rem .7rem;
+        background-color: $nav-color;
+        border: none;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+}

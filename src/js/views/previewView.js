@@ -6,15 +6,12 @@ class PreviewView extends View {
   _generateMarkup() {
     const id = window.location.hash.slice(1);
     return `
-      <li class="preview">
+      <li class="countryPreview">
         <a href="#country/${this._data.code}">
-          <figure class="preview__fig">
+          <figure class="countryFlag">
             <img src="${this._data.flag}" alt="${this._data.name}" />
           </figure>
-          <div class="preview__data">
-            <h4 class="preview__title">${this._data.name}</h4>
-
-          </div>
+            <h3 class="countryName">${this._data.name}</h3>
         </a>
       </li>
     `;

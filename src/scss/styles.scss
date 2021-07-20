@@ -1,8 +1,13 @@
 @import 'variables';
 @import 'nav';
+@import 'pagination';
+@import 'regions';
+@import 'country';
 
 body {
   margin: 0;
+  background-color: $back-color;
+  font-family: $body-font;
 }
 
 h1 {
@@ -14,6 +19,7 @@ h1 {
   transform: rotate(-9deg);
   color: $title-color;
 
+
   @media only screen and (min-width: $bp-small) {
     display: inline-block;
     font-size: 4rem;
@@ -23,9 +29,82 @@ h1 {
   }
 
   @media only screen and (min-width: $bp-large) {
-    margin-top: 0rem;
+    margin-top: -1rem;
     font-size: 6rem;
     padding-left: 5rem;
   }
+}
 
+.countriesContainer {
+  padding-top: 1rem;
+
+  h3 {
+    font-family: $nav-font;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    list-style-type: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: .5rem .75rem;
+    padding: 1rem 0.5rem;
+    background-color: $country-color;
+    border-radius: 10px;
+  }
+
+  a {
+    margin: 0;
+    color: $title-color;
+    text-decoration: none;
+    text-align: center;
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  h3 {
+    margin: 0;
+  }
+
+  img {
+    width: 18rem;
+  }
+
+  @media only screen and (min-width: $bp-small) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+
+    img {
+      width: 15rem;
+    }
+  }
+
+  @media only screen and (min-width: $bp-medium) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media only screen and (min-width: $bp-large) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+}
+
+.countryIntro {
+  img {
+    width: 50rem;
+  }
+}
+
+hr {
+  text-align: center;
+  width: 90%;
+  border: 1px solid $title-color;
+  border-radius: 5px;
 }

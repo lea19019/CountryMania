@@ -3,15 +3,17 @@
 .menu-container {
     display: grid;
     grid-template-rows: 1fr 1fr;
+    padding: 1rem;
+    font-size: larger;
+    font-family: $nav-font;
 
     @media only screen and (min-width: $bp-small) {
         display: flex;
         justify-content: flex-end;
     }
 
-    padding: 1rem;
-    font-size: larger;
-    font-family: $nav-font;
+
+
 }
 
 .menu-container ul {

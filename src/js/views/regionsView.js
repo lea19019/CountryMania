@@ -1,7 +1,7 @@
 import View from "./View";
 
 class RegionsView extends View {
-    _parentElement = document.querySelector('.regionsContainer');
+    _parentElement = document.querySelector('#container');
     _errorMessage = 'There was a problem, please try again 😕';
     _message = '';
 
@@ -10,6 +10,8 @@ class RegionsView extends View {
     };
 
     _generateMarkup() {
+        this._parentElement.className = "";
+        this._parentElement.classList.add('regionsContainer')
         let regionsView = ""
         Object.entries(this._data).forEach(([region, countries]) => {
             regionsView += this._generateRegionMarkup(region, countries);

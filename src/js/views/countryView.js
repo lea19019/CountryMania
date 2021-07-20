@@ -1,7 +1,7 @@
 import View from './View.js';
 
 class CountryView extends View {
-  _parentElement = document.querySelector('.countryContainer');
+  _parentElement = document.querySelector('#container');
   _errorMessage = 'There was a problem, please try again 😕';
   _message = '';
 
@@ -10,6 +10,8 @@ class CountryView extends View {
   }
 
   _generateMarkup() {
+    this._parentElement.className = "";
+    this._parentElement.classList.add('countryContainer')
     const translations = Object.entries(this._data.translations);
 
     return `

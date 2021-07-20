@@ -2,35 +2,21 @@
   "name": "countrymania",
   "version": "1.0.0",
   "description": "WDD App Project",
-  "default": "index.html",
+  "default": "src/index.html",
   "scripts": {
-    "prestart": "rimraf build/*",
-    "start": "parcel src/index.html/",
-    "prebuild": "rimraf dist/*",
-    "build": "parcel build src/index.html --public-url ./",
-    "watch": "parcel watch src/index.html -d build/",
-    "lint": "eslint *.js src/**/*.js"
+    "start": "parcel src/index.html",
+    "build": "parcel build src/index.html --dist-dir ./dist"
   },
-  "author": "Shane T",
-  "license": "GPL-2.0",
+  "author": "Jonas Schedtmann",
+  "license": "ISC",
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-eslint": "^10.1.0",
-    "babel-preset-env": "^1.7.0",
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb": "18.0.1",
-    "eslint-plugin-compat": "^3.9.0",
-    "eslint-plugin-import": "^2.23.4",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-react": "^7.24.0",
-    "eslint-plugin-react-hooks": "^2.5.1",
-    "parcel-bundler": "^1.12.5",
-    "rimraf": "^3.0.2",
-    "sass": "^1.35.2"
+    "@parcel/transformer-sass": "^2.0.0-beta.2",
+    "parcel": "2.0.0-beta.2",
+    "sass": "^1.26.10"
   },
   "dependencies": {
+    "core-js": "^3.6.5",
     "fractional": "^1.0.0",
     "regenerator-runtime": "^0.13.7"
-  },
-  "resolutions": {}
+  }
 }

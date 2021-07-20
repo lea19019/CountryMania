@@ -1,4 +1,4 @@
-import { API_URL, COUNTRY_PER_PAGE, REGIONS } from "./config";
+import { API_URL, COUNTRY_PER_PAGE } from "./config";
 import { async } from 'regenerator-runtime';
 import { AJAX } from "./helper";
 

@@ -29,6 +29,7 @@ This project is part of my JavaScript learning journey and you can give a look t
 # Useful Websites
 
 * [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+* [NPM](https://www.npmjs.com/)
 
 # Future Work
 
